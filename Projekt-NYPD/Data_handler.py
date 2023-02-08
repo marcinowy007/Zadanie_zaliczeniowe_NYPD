@@ -3,19 +3,11 @@
 
 import pandas as pd
 from pycountry import countries, historic_countries
-
+from COUNTRY_RENAMING_DICT import COUNTRY_RENAMING_DICT
 
 class Data_handler:
 
-    country_renaming_dict = {
-        "United States of America": "USA",
-        "United Kingdom": "UK",
-        "Democratic Republic of Congo": "Congo (DRC)",
-        "Republic of Congo": "Congo (ROC)",
-        "Myanmar": "Burma"
-    }
-
-    def __init__(self, GDP_path: str, population_path: str, emissions_path: str):
+    def __init__(self, GDP_path: str, population_path: str, emissions_path: str, country_renaming_dict=COUNTRY_RENAMING_DICT):
         '''tworzenie tabelek na podstawie podanych ścieżek'''
         with open(GDP_path, 'r') as GDP, open(population_path, 'r') as population, open(emissions_path, 'r') as emissions:
             GDP = pd.read_csv(GDP, skiprows= 4)
@@ -34,17 +26,17 @@ class Data_handler:
         self.available_years = (max({GDP_start, population_start, emissions_start}), min({GDP_end, population_end, emissions_end}))
 
         # Formatowanie tabelek z poszczególnych plików, żeby łatwiej było je połączyć oraz określenie nazw państw
+        self.country_renaming_dict = country_renaming_dict
         GDP = self.horizontal_pipeline(GDP, "GDP")
         population = self.horizontal_pipeline(population, "Population")
         emissions = self.vertical_pipeline(emissions, "CO\u2082 emission")
-        print(GDP.dtypes)
-        print(population.dtypes)
-        print(emissions.dtypes)
         # Łączenie tabelek
         merged_GDP_and_population = pd.merge(GDP, population, on=["Country", "Year"])
-        print("W połowie!")
         self.product = pd.merge(merged_GDP_and_population, emissions, on=["Country", "Year"])
-        print("A kuku!")
+        self.product.to_csv("C:/Marcin Łyżwiński/Studia/Narzędzia python/Zadanie zaliczeniowe - folder/Materiały/product", index=False)
+
+        # for country in set(self.product["Country"]):
+        #     print(country)
 
 
 
@@ -55,7 +47,8 @@ class Data_handler:
         significant_data = significant_data.rename(columns={"Country Name": "Country"})
         significant_data["Country"] = significant_data["Country"].apply(lambda x: self.country_renamer(x))
         melted_data = significant_data.melt(id_vars=["Country"], var_name="Year", value_name=value_name)
-        melted_data["Year"] = melted_data["Year"].astype("int64")
+        melted_data["Year"] = melted_data["Year"].astype("uint64")
+        melted_data = melted_data.dropna(subset=['Country'])
         return melted_data
 
 
@@ -68,8 +61,8 @@ class Data_handler:
         significant_data.reset_index(drop=True, inplace=True)
         significant_data = significant_data.rename(columns={"Total": value_name})
         vert_dict = self.vert_country_renamer_help(significant_data["Country"])
-        print("Skończyłem inny bullshit")
         significant_data["Country"].replace(vert_dict, inplace=True)
+        significant_data = significant_data.dropna(subset=['Country'])
         return significant_data
 
     def vert_country_renamer_help(self, countries_ls):
@@ -86,12 +79,9 @@ class Data_handler:
                 return countries.search_fuzzy(country_name)[0].name
             except:
                 try:
-                    self.country_renaming_dict[country_name]
+                    self.country_renaming_dict[country_name.lower()]
                 except:
-                    # Muszę dorobić ręczny słownik na razie jest paćka
-                    # pass
-                    # print(country_name)
-                    return "PAĆKA"
+                    pass
 
     # def country_renamer(self, country_name):
     #     print(type(country_name))

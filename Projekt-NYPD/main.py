@@ -1,0 +1,1 @@
+# Tu będzie wywoływanie wszystkiego i wczytywanie danych ( a przynajmniej w wersji końcowej)
