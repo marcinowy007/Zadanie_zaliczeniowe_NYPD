@@ -3,6 +3,7 @@
 
 COUNTRY_RENAMING_DICT = {
     "bahamas, the": "Bahamas",
+    "curacao": "Curacao",
     "democratic republic of congo": "Congo (DRC)",
     "congo, dem. rep.": "Congo (DRC)",
     "republic of congo": "Congo (ROC)",
@@ -15,9 +16,12 @@ COUNTRY_RENAMING_DICT = {
     "iran, islamic rep.": "Iran, Islamic Republic of",
     "st. kitts and nevis": "Saint Kitts and Nevis",
     "st. kitts-nevis-anguilla": "Saint Kitts and Nevis",
+    "st. kitts-nevis": "Saint Kitts and Nevis",
     "korea, dem. people's rep.": "Korea, Democratic People's Republic of",
     "democratic people s republic of korea": "Korea, Democratic People's Republic of",
     "korea, rep.": "Korea, Republic of",
+    "republic of korea": "Korea, Republic of",
+    "niger": "Niger",
     "turkiye": "Turkey",
     "st. vincent and the grenadines": "Saint Vincent and the Grenadines",
     "st. vincent & the grenadines": "Saint Vincent and the Grenadines",

@@ -5,12 +5,14 @@ import pandas as pd
 from pycountry import countries, historic_countries
 from COUNTRY_RENAMING_DICT import COUNTRY_RENAMING_DICT
 
+SECIK = {'Malaysia', 'Serbia', 'France'}
+SLOWNICZEK = {}
 class Data_handler:
 
     def __init__(self, GDP_path: str, population_path: str, emissions_path: str, country_renaming_dict=COUNTRY_RENAMING_DICT):
         '''tworzenie tabelek na podstawie podanych ścieżek'''
         with open(GDP_path, 'r') as GDP, open(population_path, 'r') as population, open(emissions_path, 'r') as emissions:
-            GDP = pd.read_csv(GDP, skiprows= 4)
+            GDP = pd.read_csv(GDP, skiprows=4)
             population = pd.read_csv(population, skiprows=4)
             emissions = pd.read_csv(emissions)
 
@@ -29,10 +31,12 @@ class Data_handler:
         self.country_renaming_dict = country_renaming_dict
         GDP = self.horizontal_pipeline(GDP, "GDP")
         population = self.horizontal_pipeline(population, "Population")
-        emissions = self.vertical_pipeline(emissions, "CO\u2082 emission")
+        emissions = self.vertical_pipeline(emissions, "CO2 emission")
         # Łączenie tabelek
-        merged_GDP_and_population = pd.merge(GDP, population, on=["Country", "Year"])
-        self.product = pd.merge(merged_GDP_and_population, emissions, on=["Country", "Year"])
+        merged_GDP_and_population = pd.merge(GDP, population, on=['Country', 'Year'])
+        self.product = pd.merge(merged_GDP_and_population, emissions, on=['Country', 'Year'])
+        self.product = self.product.sort_values(['Year', 'Country'])
+        # Tymczasowy zapis tabelki
         self.product.to_csv("C:/Marcin Łyżwiński/Studia/Narzędzia python/Zadanie zaliczeniowe - folder/Materiały/product", index=False)
 
         # for country in set(self.product["Country"]):
@@ -45,10 +49,16 @@ class Data_handler:
         # trzeba sprawdić czy mieści się w latach NIE TRZEBA JUŻ SPRAWDZIŁEŚ
         significant_data = df[["Country Name"]+[str(i) for i in range(int(self.available_years[0]), int(self.available_years[1])+1)]]
         significant_data = significant_data.rename(columns={"Country Name": "Country"})
+        # ls = significant_data["Country"]
+        # for elt in ls:
+        #     wyniczek = self. country_renamer(elt)
+        #     if wyniczek in SECIK:
+        #         SLOWNICZEK[elt] = wyniczek
         significant_data["Country"] = significant_data["Country"].apply(lambda x: self.country_renamer(x))
         melted_data = significant_data.melt(id_vars=["Country"], var_name="Year", value_name=value_name)
         melted_data["Year"] = melted_data["Year"].astype("uint64")
         melted_data = melted_data.dropna(subset=['Country'])
+        melted_data = melted_data.groupby(['Year', 'Country']).sum().reset_index()
         return melted_data
 
 
@@ -63,30 +73,34 @@ class Data_handler:
         vert_dict = self.vert_country_renamer_help(significant_data["Country"])
         significant_data["Country"].replace(vert_dict, inplace=True)
         significant_data = significant_data.dropna(subset=['Country'])
+        significant_data = significant_data.groupby(['Year', 'Country']).sum().reset_index()
         return significant_data
 
     def vert_country_renamer_help(self, countries_ls):
         countries_set = set(countries_ls)
+        # ls = countries_set
+        # for elt in ls:
+        #     wyniczek = self.country_renamer(elt)
+        #     if wyniczek in SECIK:
+        #         SLOWNICZEK[elt] = wyniczek
         vert_dict = {country: self.country_renamer(country) for country in countries_set}
         # Have to add handwritten dict
         return vert_dict
 
     def country_renamer(self, country_name):
         try:
-            return historic_countries.search_fuzzy(country_name)[0].name
+            return self.country_renaming_dict[country_name.lower()]
+
+
         except:
             try:
                 return countries.search_fuzzy(country_name)[0].name
             except:
                 try:
-                    self.country_renaming_dict[country_name.lower()]
+                    return historic_countries.search_fuzzy(country_name)[0].name
                 except:
                     pass
 
-    # def country_renamer(self, country_name):
-    #     print(type(country_name))
-    #     tekst = countries.search_fuzzy(country_name)[0]
-    #     return tekst.name
 
 
 
@@ -98,6 +112,8 @@ population_path = "Data/Population.csv"
 emissions_path = "Data/fossil-fuel-co2-emissions-by-nation_csv.csv"
 
 Data_handler(GDP_path, population_path, emissions_path)
+for key, value in SLOWNICZEK.items():
+    print(key, value)
 
 
 
