@@ -26,6 +26,8 @@ class Data_handler:
         emissions_start = emissions["Year"][0] # Wolę mieć lata w stringach żeby móc je printować użytkownikowi
         emissions_end = emissions["Year"].iloc[-1]
         self.available_years = (max({GDP_start, population_start, emissions_start}), min({GDP_end, population_end, emissions_end}))
+        # Pytanie użytkownika o lata
+        self.available_years = (self.get_user_years())
 
         # Formatowanie tabelek z poszczególnych plików, żeby łatwiej było je połączyć oraz określenie nazw państw
         self.country_renaming_dict = country_renaming_dict
@@ -41,6 +43,15 @@ class Data_handler:
 
         # for country in set(self.product["Country"]):
         #     print(country)
+    def get_user_years(self):
+        print(f"The data available allows analysis from {self.available_years[0]} to {self.available_years[1]}.")
+        print("Select the range of years you are interested in.")
+        start_year = int(input("Start year: "))
+        end_year = int(input("End year: "))
+        if start_year < self.available_years[0] or end_year > self.available_years[1]:
+            print("Selected years are not available!")
+            start_year, end_year = self.get_user_years()
+        return start_year, end_year
 
 
 
@@ -84,7 +95,6 @@ class Data_handler:
         #     if wyniczek in SECIK:
         #         SLOWNICZEK[elt] = wyniczek
         vert_dict = {country: self.country_renamer(country) for country in countries_set}
-        # Have to add handwritten dict
         return vert_dict
 
     def country_renamer(self, country_name):
@@ -107,13 +117,13 @@ class Data_handler:
 
 
 
-GDP_path = "Data/GDP.csv"
-population_path = "Data/Population.csv"
-emissions_path = "Data/fossil-fuel-co2-emissions-by-nation_csv.csv"
-
-Data_handler(GDP_path, population_path, emissions_path)
-for key, value in SLOWNICZEK.items():
-    print(key, value)
+# GDP_path = "Data/GDP.csv"
+# population_path = "Data/Population.csv"
+# emissions_path = "Data/fossil-fuel-co2-emissions-by-nation_csv.csv"
+#
+# Data_handler(GDP_path, population_path, emissions_path)
+# for key, value in SLOWNICZEK.items():
+#     print(key, value)
 
 
 
