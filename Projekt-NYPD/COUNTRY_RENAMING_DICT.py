@@ -1,6 +1,6 @@
 # W tym pliku znajduje się jedynie słownik pomagający ujednolicić nazwy państw z datasetów
 # Wszystkie klucze zapisane śa małymi literami i przy wyszukiwaniu haseł trzeba o tym pamiętać
-import pycountry
+
 
 COUNTRY_RENAMING_DICT = {
     "bahamas, the": "Bahamas",
@@ -37,24 +37,13 @@ COUNTRY_RENAMING_DICT = {
     "macau special adminstrative region of china": "Macao",
     "st. martin (french part)": "Saint Martin (French part)",
     "saint martin (dutch portion)": "Sint Maarten (Dutch part)",
-    "former yemen": "Former Yemen Arab Republic",  # zastanów się co zrobić
+    "former yemen": "Former Yemen Arab Republic",
     "wallis and futuna islands": "Wallis and Futuna",
     "west bank and gaza": "West Bank and Gaza",
     "occupied palestinian territory": "West Bank and Gaza",
-
-
-
-
-
-
-
-
-
-
     "united states of america": "United States",
     "usa": "United States",
     "uk": "United Kingdom",
     "myanmar": "Burma"
     }
-# print("CHINA (MAINLAND)".lower())
-# print(pycountry.countries.search_fuzzy("CHINA"))
+

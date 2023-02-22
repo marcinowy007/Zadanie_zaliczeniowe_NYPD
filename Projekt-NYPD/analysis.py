@@ -1,4 +1,4 @@
-# Tu będą metody do analiz
+# Tu znajdują się metody do analiz
 import pandas as pd
 
 
