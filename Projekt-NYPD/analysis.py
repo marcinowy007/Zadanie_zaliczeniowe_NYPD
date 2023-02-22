@@ -45,10 +45,5 @@ def CO2_change_last10years(df, start_year, end_year):
     return top5_CO2_increase, top5_CO2_decrease
 
 
-# with open("C:/Marcin Łyżwiński/Studia/Narzędzia python/Zadanie zaliczeniowe - folder/Materiały/product", 'r') as tabelka:
-#     tabelka = pd.read_csv(tabelka)
-# tabeleczka = top5_value_per_capita(tabelka, "CO2 emission", "CO2 emission")
-# pass
-
 
 
