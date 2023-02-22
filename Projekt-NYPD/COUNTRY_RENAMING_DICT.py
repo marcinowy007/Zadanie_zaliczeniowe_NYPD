@@ -1,9 +1,11 @@
 # W tym pliku znajduje się jedynie słownik pomagający ujednolicić nazwy państw z datasetów
 # Wszystkie klucze zapisane śa małymi literami i przy wyszukiwaniu haseł trzeba o tym pamiętać
+import pycountry
 
 COUNTRY_RENAMING_DICT = {
     "bahamas, the": "Bahamas",
     "curacao": "Curacao",
+    "china (mainland)": "China",
     "democratic republic of congo": "Congo (DRC)",
     "congo, dem. rep.": "Congo (DRC)",
     "republic of congo": "Congo (ROC)",
@@ -54,5 +56,5 @@ COUNTRY_RENAMING_DICT = {
     "uk": "United Kingdom",
     "myanmar": "Burma"
     }
-
-
+# print("CHINA (MAINLAND)".lower())
+# print(pycountry.countries.search_fuzzy("CHINA"))
